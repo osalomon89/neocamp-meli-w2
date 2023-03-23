@@ -18,7 +18,7 @@ type bookController struct {
 	bookUsecase usecase.BookUsecase
 }
 
-func NewBookHandler(bookUsecase usecase.BookUsecase) BookController {
+func NewBookController(bookUsecase usecase.BookUsecase) BookController {
 	return &bookController{
 		bookUsecase: bookUsecase,
 	}

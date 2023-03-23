@@ -1,4 +1,4 @@
-package memory
+package repository
 
 import (
 	"github.com/teamcubation/neocamp-meli/clean-architecture/internal/domain"

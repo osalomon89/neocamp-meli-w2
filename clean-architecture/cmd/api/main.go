@@ -1,41 +1,21 @@
 package main
 
 import (
-	"github.com/teamcubation/neocamp-meli/clean-architecture/internal/domain"
-	"github.com/teamcubation/neocamp-meli/clean-architecture/internal/infrastructure/http"
-	ctrl "github.com/teamcubation/neocamp-meli/clean-architecture/internal/infrastructure/http/controller"
-	repo "github.com/teamcubation/neocamp-meli/clean-architecture/internal/infrastructure/repository/memory"
+	ctrl "github.com/teamcubation/neocamp-meli/clean-architecture/internal/adapter/controller"
+	repo "github.com/teamcubation/neocamp-meli/clean-architecture/internal/adapter/repository"
+	"github.com/teamcubation/neocamp-meli/clean-architecture/internal/infra/db"
+	"github.com/teamcubation/neocamp-meli/clean-architecture/internal/infra/web"
 	"github.com/teamcubation/neocamp-meli/clean-architecture/internal/usecase"
 )
 
 const port = "9000"
 
-var db []domain.Book = []domain.Book{
-	{
-		ID:     1,
-		Title:  "Dune",
-		Price:  1965,
-		Author: "Frank Herbert",
-	},
-	{
-		ID:     2,
-		Title:  "Cita con Rama",
-		Price:  1974,
-		Author: "Arthur C. Clarke",
-	},
-	{
-		ID:     3,
-		Title:  "Un guijarro en el cielo",
-		Price:  500,
-		Author: "Isaac Asimov",
-	},
-}
-
 func main() {
-	repository := repo.NewBookRepository(db)
+	conn := db.GetConnectionDB()
+	repository := repo.NewBookRepository(conn)
 	usecase := usecase.NewBookUsecase(repository)
-	handler := ctrl.NewBookHandler(usecase)
-	server := http.NewHTTPServer(handler)
+	controller := ctrl.NewBookController(usecase)
+	server := web.NewHTTPServer(controller)
 
 	server.RegisterRouter()
 

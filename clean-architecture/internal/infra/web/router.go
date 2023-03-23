@@ -1,10 +1,10 @@
-package http
+package web
 
 import (
 	"log"
 
 	"github.com/gin-gonic/gin"
-	ctrl "github.com/teamcubation/neocamp-meli/clean-architecture/internal/infrastructure/http/controller"
+	ctrl "github.com/teamcubation/neocamp-meli/clean-architecture/internal/adapter/controller"
 )
 
 type HTTPServer interface {
