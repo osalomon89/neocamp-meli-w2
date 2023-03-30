@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-type Transactions interface {
+type Transaction interface {
 	Deposit(amount int)
 	Withdraw(amount int) error
 	Balance() int
@@ -33,7 +33,7 @@ func main() {
 	printBalance(&wallet)
 }
 
-func printBalance(wallet Transactions) {
+func printBalance(wallet Transaction) {
 	result := wallet.Balance()
 	fmt.Println(result)
 }

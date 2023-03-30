@@ -1,13 +1,15 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Creature struct {
 	Species string
 }
 
 func main() {
-	var creature Creature = Creature{Species: "shark"}
+	creature := Creature{Species: "shark"}
 
 	fmt.Printf("1) %+v\n", creature)
 	changeCreature(creature)
@@ -18,3 +20,11 @@ func changeCreature(creature Creature) {
 	creature.Species = "jellyfish"
 	fmt.Printf("2) %+v\n", creature)
 }
+
+/*func main() {
+	w := wallet.Wallet{}
+	w.Deposit(10)
+	w.Deposit(50)
+
+	fmt.Printf("Balance: %d\n", w.Balance())
+}*/
