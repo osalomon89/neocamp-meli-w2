@@ -1,4 +1,4 @@
-module github.com/teamcubation/neocamp-meli/rest/inventory
+module github.com/mercadolibre/inventory
 
 go 1.19
 
