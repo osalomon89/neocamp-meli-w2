@@ -75,11 +75,6 @@ func getBooks(ctx *gin.Context) {
 	})
 }
 
-type ResponseInfo struct {
-	Error bool   `json:"error"`
-	Data  string `json:"data"`
-}
-
 func getBook(ctx *gin.Context) {
 	idParam := ctx.Param("id")
 
