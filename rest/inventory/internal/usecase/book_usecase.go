@@ -2,43 +2,52 @@ package usecase
 
 import (
 	"errors"
+	"fmt"
 
-	"github.com/mercadolibre/inventory/internal/domain"
+	"github.com/mercadolibre/inventory/internal/entity"
 )
 
 type BookUsecase interface {
-	GetAllBooks() []domain.Book
-	GetBookByID(id int) *domain.Book
-	AddBook(book domain.Book) (*domain.Book, error)
+	GetAllBooks() []entity.Book
+	GetBookByID(id int) (entity.Book, error)
+	AddBook(book entity.Book) (entity.Book, error)
 }
 
 type bookUsecase struct {
-	repo domain.BookRepository
+	repo entity.BookRepository
 }
 
-func NewBookUsecase(repo domain.BookRepository) BookUsecase {
+func NewBookUsecase(repo entity.BookRepository) BookUsecase {
 	return &bookUsecase{
 		repo: repo,
 	}
 }
 
-func (u *bookUsecase) GetAllBooks() []domain.Book {
+func (u *bookUsecase) GetAllBooks() []entity.Book {
 	return u.repo.GetBooks()
 }
 
-func (u *bookUsecase) GetBookByID(id int) *domain.Book {
-	return u.repo.GetBook(id)
+func (u *bookUsecase) GetBookByID(id int) (entity.Book, error) {
+	book, err := u.repo.GetBook(uint(id))
+	if err != nil {
+		return entity.Book{}, fmt.Errorf("error in repository: %w", err)
+	}
+
+	return book, nil
 }
 
-func (u *bookUsecase) AddBook(book domain.Book) (*domain.Book, error) {
+func (u *bookUsecase) AddBook(book entity.Book) (entity.Book, error) {
 	books := u.repo.GetBooks()
 	for _, b := range books {
-		if b.ID == book.ID {
-			return nil, errors.New("book already exist")
+		if b.Code == book.Code {
+			return entity.Book{}, errors.New("book already exist")
 		}
 	}
 
-	result := u.repo.AddBook(book)
+	err := u.repo.AddBook(&book)
+	if err != nil {
+		return entity.Book{}, fmt.Errorf("error in repository: %w", err)
+	}
 
-	return result, nil
+	return book, nil
 }
