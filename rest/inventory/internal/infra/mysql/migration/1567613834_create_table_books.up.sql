@@ -7,5 +7,6 @@ CREATE TABLE IF NOT EXISTS books (
 	stock bigint(20) DEFAULT NULL,
 	created_at datetime(3) DEFAULT NULL,
 	updated_at datetime(3) DEFAULT NULL,
-	PRIMARY KEY (id)
+	PRIMARY KEY (id),
+	UNIQUE KEY code (code)
 );

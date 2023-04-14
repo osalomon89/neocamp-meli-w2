@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -37,20 +36,17 @@ func (ctrl BookController) GetBooks(c *gin.Context) {
 }
 
 type bookRequestDTO struct {
-	Code   string `json:"code" validate:"required"`
-	Author string `json:"author" validate:"required"`
-	Title  string `json:"title" validate:"required"`
-	Price  int    `json:"price" validate:"required"`
-	Stock  int    `json:"stock" validate:"required"`
+	Code   string `json:"code" binding:"required"`
+	Author string `json:"author" binding:"required"`
+	Title  string `json:"title" binding:"required"`
+	Price  int    `json:"price" binding:"required"`
+	Stock  int    `json:"stock" binding:"required"`
 }
 
 func (ctrl BookController) AddBook(c *gin.Context) {
-	request := c.Request
-	body := request.Body
-
 	var bookRequest bookRequestDTO
-	err := json.NewDecoder(body).Decode(&bookRequest)
-	if err != nil {
+
+	if err := c.ShouldBindJSON(&bookRequest); err != nil {
 		c.JSON(http.StatusBadRequest, presenter.ApiError{
 			StatusCode: http.StatusBadRequest,
 			Message:    fmt.Sprintf("invalid json: %s", err.Error()),
