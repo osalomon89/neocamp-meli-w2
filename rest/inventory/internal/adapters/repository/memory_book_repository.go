@@ -17,11 +17,11 @@ func NewBookRepository() entity.BookRepository {
 	return &bookRepository{}
 }
 
-func (r *bookRepository) GetBooks() []entity.Book {
-	return r.db
+func (r *bookRepository) GetBooks() ([]entity.Book, error) {
+	return r.db, nil
 }
 
-func (r *bookRepository) GetBook(id uint) (entity.Book, error) {
+func (r *bookRepository) GetBookByID(id uint) (entity.Book, error) {
 	for _, book := range r.db {
 		if book.ID == id {
 			return book, nil
@@ -29,6 +29,16 @@ func (r *bookRepository) GetBook(id uint) (entity.Book, error) {
 	}
 
 	return entity.Book{}, errors.New("book not found")
+}
+
+func (r *bookRepository) CheckBookByCode(code string) (bool, error) {
+	for _, book := range r.db {
+		if book.Code == code {
+			return true, nil
+		}
+	}
+
+	return false, nil
 }
 
 func (r *bookRepository) AddBook(book *entity.Book) error {

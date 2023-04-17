@@ -11,6 +11,7 @@ import (
 )
 
 func main() {
+	//MySQL
 	conn, err := mysql.GetConnectionDB()
 	if err != nil {
 		log.Fatalln(err)

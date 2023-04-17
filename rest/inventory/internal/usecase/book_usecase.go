@@ -1,14 +1,13 @@
 package usecase
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/mercadolibre/inventory/internal/entity"
 )
 
 type BookUsecase interface {
-	GetAllBooks() []entity.Book
+	GetAllBooks() ([]entity.Book, error)
 	GetBookByID(id int) (entity.Book, error)
 	AddBook(book entity.Book) (entity.Book, error)
 }
@@ -23,12 +22,17 @@ func NewBookUsecase(repo entity.BookRepository) BookUsecase {
 	}
 }
 
-func (u *bookUsecase) GetAllBooks() []entity.Book {
-	return u.repo.GetBooks()
+func (u *bookUsecase) GetAllBooks() ([]entity.Book, error) {
+	books, err := u.repo.GetBooks()
+	if err != nil {
+		return books, fmt.Errorf("error in repository: %w", err)
+	}
+
+	return books, nil
 }
 
 func (u *bookUsecase) GetBookByID(id int) (entity.Book, error) {
-	book, err := u.repo.GetBook(uint(id))
+	book, err := u.repo.GetBookByID(uint(id))
 	if err != nil {
 		return entity.Book{}, fmt.Errorf("error in repository: %w", err)
 	}
@@ -37,15 +41,18 @@ func (u *bookUsecase) GetBookByID(id int) (entity.Book, error) {
 }
 
 func (u *bookUsecase) AddBook(book entity.Book) (entity.Book, error) {
-	books := u.repo.GetBooks()
-	for _, b := range books {
-		if b.Code == book.Code {
-			return entity.Book{}, errors.New("book already exist")
+	exist, err := u.repo.CheckBookByCode(book.Code)
+	if err != nil {
+		return book, fmt.Errorf("error in repository: %w", err)
+	}
+
+	if exist {
+		return book, entity.BookAlreadyExist{
+			Message: "book already exist",
 		}
 	}
 
-	err := u.repo.AddBook(&book)
-	if err != nil {
+	if err := u.repo.AddBook(&book); err != nil {
 		return entity.Book{}, fmt.Errorf("error in repository: %w", err)
 	}
 

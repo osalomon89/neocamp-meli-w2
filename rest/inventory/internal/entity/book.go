@@ -1,6 +1,9 @@
 package entity
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 type Book struct {
 	ID        uint
@@ -14,7 +17,24 @@ type Book struct {
 }
 
 type BookRepository interface {
-	GetBooks() []Book
-	GetBook(id uint) (Book, error)
+	GetBooks() ([]Book, error)
+	GetBookByID(id uint) (Book, error)
+	CheckBookByCode(code string) (bool, error)
 	AddBook(book *Book) error
+}
+
+type BookNotFound struct {
+	Message string
+}
+
+func (e BookNotFound) Error() string {
+	return fmt.Sprintf("error: '%s'", e.Message)
+}
+
+type BookAlreadyExist struct {
+	Message string
+}
+
+func (e BookAlreadyExist) Error() string {
+	return fmt.Sprintf("error: '%s'", e.Message)
 }

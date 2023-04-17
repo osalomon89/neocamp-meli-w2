@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -29,9 +30,15 @@ func Pong(c *gin.Context) {
 }
 
 func (ctrl BookController) GetBooks(c *gin.Context) {
+	books, err := ctrl.bookUsecase.GetAllBooks()
+	c.JSON(http.StatusInternalServerError, presenter.ApiError{
+		StatusCode: http.StatusInternalServerError,
+		Message:    fmt.Sprintf("error getting books: %s", err.Error()),
+	})
+
 	c.JSON(http.StatusOK, presenter.BooksResponse{
 		Error: false,
-		Data:  presenter.Books(ctrl.bookUsecase.GetAllBooks()),
+		Data:  presenter.Books(books),
 	})
 }
 
@@ -64,9 +71,21 @@ func (ctrl BookController) AddBook(c *gin.Context) {
 
 	result, err := ctrl.bookUsecase.AddBook(book)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, presenter.ApiError{
-			StatusCode: http.StatusInternalServerError,
-			Message:    fmt.Sprintf("error saving book: %s", err.Error()),
+		var errorMsg string
+		var httpStatus int
+
+		existError := new(entity.BookAlreadyExist)
+		if ok := errors.As(err, existError); ok {
+			httpStatus = http.StatusBadRequest
+			errorMsg = existError.Error()
+		} else {
+			httpStatus = http.StatusInternalServerError
+			errorMsg = err.Error()
+		}
+
+		c.JSON(httpStatus, presenter.ApiError{
+			StatusCode: httpStatus,
+			Message:    errorMsg,
 		})
 		return
 	}
@@ -91,10 +110,23 @@ func (ctrl *BookController) GetBook(c *gin.Context) {
 
 	book, err := ctrl.bookUsecase.GetBookByID(id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, presenter.ApiError{
-			StatusCode: http.StatusInternalServerError,
-			Message:    fmt.Errorf("error getting book: %w", err).Error(),
+		var errorMsg string
+		var httpStatus int
+
+		notFoundError := new(entity.BookNotFound)
+		if ok := errors.As(err, notFoundError); ok {
+			httpStatus = http.StatusNotFound
+			errorMsg = notFoundError.Error()
+		} else {
+			httpStatus = http.StatusInternalServerError
+			errorMsg = err.Error()
+		}
+
+		c.JSON(httpStatus, presenter.ApiError{
+			StatusCode: httpStatus,
+			Message:    errorMsg,
 		})
+		return
 	}
 
 	c.JSON(http.StatusOK, presenter.BookResponse{

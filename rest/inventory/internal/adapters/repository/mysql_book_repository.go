@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"database/sql"
 	"fmt"
 	"time"
 
@@ -42,22 +43,37 @@ func NewMySQLBookRepository(db *sqlx.DB) entity.BookRepository {
 	}
 }
 
-func (repo *mysqlBookRepository) GetBook(id uint) (entity.Book, error) {
+func (r *mysqlBookRepository) GetBookByID(id uint) (entity.Book, error) {
 	var book entity.Book
+	var bookDB bookDAO
 
-	bookDB := new(bookDAO)
-	err := repo.conn.Get(bookDB, "SELECT * FROM books WHERE id=?", id)
+	err := r.conn.Get(&bookDB, "SELECT * FROM books WHERE id=?", id)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return book, entity.BookNotFound{
+				Message: "book not found",
+			}
+		}
 		return book, fmt.Errorf("error getting book: %w", err)
 	}
 
 	return bookDB.toBookDomain(), nil
 }
 
-func (repo *mysqlBookRepository) AddBook(book *entity.Book) error {
+func (r *mysqlBookRepository) CheckBookByCode(code string) (bool, error) {
+	var exist bool
+	err := r.conn.Get(&exist, `SELECT EXISTS(SELECT id FROM books WHERE code =  ?)`, code)
+	if err != nil {
+		return exist, fmt.Errorf("error getting book: %w", err)
+	}
+
+	return exist, nil
+}
+
+func (r *mysqlBookRepository) AddBook(book *entity.Book) error {
 	createdAt := time.Now()
 
-	result, err := repo.conn.Exec(`INSERT INTO books 
+	result, err := r.conn.Exec(`INSERT INTO books 
 		(code, title, author, price, stock, created_at, updated_at) 
 		VALUES(?,?,?,?,?,?,?)`, book.Code, book.Title, book.Author, book.Price, book.Stock, createdAt, createdAt)
 
@@ -72,11 +88,23 @@ func (repo *mysqlBookRepository) AddBook(book *entity.Book) error {
 
 	book.ID = uint(id)
 	book.CreatedAt = createdAt
-	book.CreatedAt = createdAt
+	book.UpdatedAt = createdAt
 
 	return nil
 }
 
-func (r *mysqlBookRepository) GetBooks() []entity.Book {
-	return nil
+func (r *mysqlBookRepository) GetBooks() ([]entity.Book, error) {
+	var books []entity.Book
+	var booksDB []bookDAO
+
+	err := r.conn.Select(&booksDB, "SELECT * FROM books LIMIT 10")
+	if err != nil {
+		return books, fmt.Errorf("error getting all books: %w", err)
+	}
+
+	for _, b := range booksDB {
+		books = append(books, b.toBookDomain())
+	}
+
+	return books, nil
 }
