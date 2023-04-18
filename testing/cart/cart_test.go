@@ -1,7 +1,7 @@
 package cart_test
 
 import (
-	"github.com/osalomon89/go-testing/cart"
+	"github.com/teamcubation/neocamp-meli/testing/cart"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

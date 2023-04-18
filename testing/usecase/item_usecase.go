@@ -1,26 +1,26 @@
-package services
+package usecase
 
 import (
 	"fmt"
 
-	"github.com/osalomon89/go-testing/repositories"
+	"github.com/teamcubation/neocamp-meli/testing/repository"
 )
 
-type ItemService interface {
+type ItemUsecase interface {
 	CreateItem(name string, stock int) error
 }
 
-type itemService struct {
-	repo repositories.ItemRepository
+type itemUsecase struct {
+	repo repository.ItemRepository
 }
 
-func NewItemService(repo repositories.ItemRepository) ItemService {
-	return &itemService{
+func NewItemUsecase(repo repository.ItemRepository) ItemUsecase {
+	return &itemUsecase{
 		repo: repo,
 	}
 }
 
-func (svc *itemService) CreateItem(name string, stock int) error {
+func (svc *itemUsecase) CreateItem(name string, stock int) error {
 	if name == "" {
 		return fmt.Errorf("item name could not be empty")
 	}
@@ -37,7 +37,7 @@ func (svc *itemService) CreateItem(name string, stock int) error {
 	return nil
 }
 
-func (svc *itemService) GetItemByID(id uint) error {
+func (svc *itemUsecase) GetItemByID(id uint) error {
 	if id == 0 {
 		return fmt.Errorf("item id cannot be zero")
 	}
