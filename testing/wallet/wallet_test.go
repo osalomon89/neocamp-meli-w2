@@ -133,7 +133,7 @@ func TestWalletWithdrawTDT(t *testing.T) {
 			wallet: wallet.Wallet{
 				Balance: 20,
 			},
-			amount:      25,
+			amount:      45,
 			wantedError: errors.New("not enough money"),
 		},
 	}

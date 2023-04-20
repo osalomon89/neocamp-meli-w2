@@ -8,6 +8,7 @@ import (
 
 type ItemUsecase interface {
 	CreateItem(name string, stock int) error
+	GetItemByID(id uint) error
 }
 
 type itemUsecase struct {
