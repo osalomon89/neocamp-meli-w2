@@ -48,16 +48,16 @@ func (s *ServicoProduto) CriarProduto(nome string) bool {
 func main() {
 	// Criando instâncias dos repositórios
 	repoMySQL := &MySQLRepositorio{}
-	repoMongoDB := &MongoDBRepositorio{}
+	//repoMongoDB := &MongoDBRepositorio{}
 
 	// Criando serviços com diferentes repositórios
 	servicoMySQL := &ServicoProduto{repo: repoMySQL}
-	servicoMongoDB := &ServicoProduto{repo: repoMongoDB}
+	//servicoMongoDB := &ServicoProduto{repo: repoMongoDB}
 
 	// Usando os serviços
 	fmt.Println(servicoMySQL.ObterProduto(1))
 	servicoMySQL.CriarProduto("Novo Produto MySQL")
 
-	fmt.Println(servicoMongoDB.ObterProduto(1))
-	servicoMongoDB.CriarProduto("Novo Produto MongoDB")
+	//fmt.Println(servicoMongoDB.ObterProduto(1))
+	//servicoMongoDB.CriarProduto("Novo Produto MongoDB")
 }
