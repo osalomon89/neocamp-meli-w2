@@ -12,7 +12,7 @@ func (wallet *Wallet) Deposit(amount int) {
 
 func (wallet *Wallet) Withdraw(amount int) error {
 	if amount > wallet.Balance {
-		return errors.New("not enough money")
+		return errors.New("not enough money, please try again")
 	}
 
 	wallet.Balance -= amount

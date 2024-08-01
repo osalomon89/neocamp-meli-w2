@@ -32,7 +32,7 @@ func (svc *itemUsecase) CreateItem(name string, stock int) error {
 
 	err := svc.repo.SaveItem(name, stock)
 	if err != nil {
-		return fmt.Errorf("error in repository: %w", err)
+		return err
 	}
 
 	return nil

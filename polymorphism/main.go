@@ -1,56 +1,76 @@
 package main
 
 import (
-	"errors"
 	"fmt"
+	"math"
 )
 
-type Transaction interface {
-	Deposit(amount int)
-	Withdraw(amount int) error
-	Balance() int
+type Shape interface {
+	Area() float64
+	Perimeter() float64
 }
 
-type Wallet struct {
-	balance int
+type SouCirculo interface {
+	EuSouUmCirculo()
+}
+
+type Circle struct {
+	Radius float64
+}
+
+// Método que implementa la interfaz Shape para Circle
+func (c Circle) Area() float64 {
+	return math.Phi * c.Radius * c.Radius
+}
+
+func (c Circle) Perimeter() float64 {
+	return 2 * math.Pi * c.Radius
+}
+
+func (c Circle) EuSouUmCirculo() {
+	fmt.Println("Eu sou um circulo")
+}
+
+type Rectangle struct {
+	Width  float64
+	Height float64
+}
+
+// Método que implementa la interfaz Shape para Rectangle
+func (r Rectangle) Area() float64 {
+	return r.Width * r.Height
+}
+
+func (r Rectangle) Perimeter() float64 {
+	return 2*r.Width + 2*r.Height
+}
+
+func PrintArea(s Shape) {
+	fmt.Printf("Area: %f\n", s.Area())
+}
+
+func SouUmCirculo(s Circle) {
+	s.EuSouUmCirculo()
 }
 
 func main() {
-	//1er forma
-	var wallet = Wallet{balance: 5}
+	// areaRect := areaRectangle(15, 3)
+	// areaCirc := areaCircle(3)
+	// fmt.Println(areaRect)
+	// fmt.Println(areaCirc)
 
-	// 2da Forma
-	//wallet := Wallet{balance: 0}
+	circle := Circle{Radius: 2.0}
+	rectangle := Rectangle{Width: 3.0, Height: 4.0}
 
-	//3er forma
-	/*var wallet Wallet
-	wallet.balance = 0
-	*/
-
-	wallet.Deposit(10)
-	wallet.Deposit(15)
-
-	printBalance(&wallet)
+	PrintArea(circle)    // Polimorfismo con Circle
+	PrintArea(rectangle) // Polimorfismo con Rectangle
+	SouUmCirculo(circle)
 }
 
-func printBalance(wallet Transaction) {
-	result := wallet.Balance()
-	fmt.Println(result)
+func areaRectangle(width, height float64) float64 {
+	return width * height
 }
 
-func (wallet *Wallet) Deposit(amount int) {
-	wallet.balance += amount
-}
-
-func (wallet *Wallet) Balance() int {
-	return wallet.balance
-}
-
-func (wallet *Wallet) Withdraw(amount int) error {
-	if amount > wallet.balance {
-		return errors.New("not enough money")
-	}
-
-	wallet.balance -= amount
-	return nil
+func areaCircle(radius float64) float64 {
+	return math.Phi * radius * radius
 }
