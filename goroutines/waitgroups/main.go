@@ -8,11 +8,13 @@ import (
 
 func main() {
 	start := time.Now()
-	wg := sync.WaitGroup{}
-	wg.Add(5)
+	numbers := []int{1, 2, 3, 4, 5}
 
-	for i := 0; i < 5; i++ {
-		go getOrder(i, &wg)
+	wg := sync.WaitGroup{}
+	wg.Add(len(numbers))
+
+	for _, number := range numbers {
+		go getOrder(number, &wg)
 	}
 
 	wg.Wait()

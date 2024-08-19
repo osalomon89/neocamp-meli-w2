@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func main() {
+func main3() {
 	fmt.Println("Doing an HTTP request...")
 
 	result := make(chan string)
@@ -16,11 +16,11 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	start := time.Now()
-	go DoHttpRequest(ctx, result, 1)
-	go DoHttpRequest(ctx, result, 2)
-	go DoHttpRequest(ctx, result, 3)
-	go DoHttpRequest(ctx, result, 4)
-	go DoHttpRequest(ctx, result, 5)
+	go DoHttpRequest3(ctx, result, 1)
+	go DoHttpRequest3(ctx, result, 2)
+	go DoHttpRequest3(ctx, result, 3)
+	go DoHttpRequest3(ctx, result, 4)
+	go DoHttpRequest3(ctx, result, 5)
 
 	msg := <-result
 	cancel()
@@ -34,9 +34,9 @@ func main() {
 
 // DoHttpRequest performs an new HTTP request
 // that can take between 0 and 500ms to be done
-func DoHttpRequest(ctx context.Context, result chan<- string, i int) {
+func DoHttpRequest3(ctx context.Context, result chan<- string, i int) {
 	// Do an HTTP request synchronously
-	rand.Seed(time.Now().UnixNano())
+	rand.New(rand.NewSource(time.Now().UnixNano()))
 	n := rand.Intn(500)
 	time.Sleep(time.Duration(n) * time.Millisecond)
 
@@ -46,6 +46,6 @@ func DoHttpRequest(ctx context.Context, result chan<- string, i int) {
 	case result <- response:
 		fmt.Printf("Goroutine finished #%d\n", i)
 	case <-ctx.Done():
-		fmt.Printf("Goroutine finished (timeout) #%d\n", i)
+		fmt.Printf("Timeout: #%d\n", i)
 	}
 }

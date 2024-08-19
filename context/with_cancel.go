@@ -25,7 +25,7 @@ func operation2(ctx context.Context) {
 	}
 }
 
-func main() {
+func main2() {
 	// Create a new context
 	ctx := context.Background()
 	// Create a new context, with its cancellation function

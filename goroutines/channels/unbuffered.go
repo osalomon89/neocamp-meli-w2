@@ -1,4 +1,9 @@
-// package main
+package main
+
+import (
+	"fmt"
+	"time"
+)
 
 // import (
 // 	"fmt"
@@ -12,28 +17,29 @@
 // // Canal sin buffer (unbuffered channel): El canal sin buffer bloqueará tanto la goroutine emisora como la receptora hasta que se realice la comunicación, asegurando así una sincronización coordinada.
 // // Canal con buffer (buffered channel): el canal con buffer permite el envío de valores sin bloquear la goroutine emisora siempre y cuando haya espacio disponible en el buffer.
 
-// func main() {
-// 	start := time.Now()
-// 	c := make(chan string)
+func main() {
+	start := time.Now()
+	//var c chan string
+	c := make(chan string, 5)
 
-// 	for i := 0; i < 5; i++ {
-// 		go getOrder(i, c)
-// 	}
+	for i := 0; i < 5; i++ {
+		go getOrder(i, c)
+	}
 
-// 	for i := 0; i < 5; i++ {
-// 		msg := <-c
-// 		fmt.Print(msg)
-// 	}
+	msg1 := <-c
+	msg2 := <-c
 
-// 	close(c)
+	fmt.Println(msg1, msg2)
 
-// 	fmt.Println("Finished")
-// 	fmt.Println(time.Since(start))
-// }
+	close(c)
 
-// func getOrder(id int, c chan string) {
-// 	time.Sleep(1 * time.Second)
-// 	msg := fmt.Sprintf("The API call, number %d, was executed\n", id)
+	fmt.Println("Finished")
+	fmt.Println(time.Since(start))
+}
 
-// 	c <- msg
-// }
+func getOrder(id int, c chan string) {
+	time.Sleep(1 * time.Second)
+	msg := fmt.Sprintf("The API call, number %d, was executed\n", id)
+
+	c <- msg
+}

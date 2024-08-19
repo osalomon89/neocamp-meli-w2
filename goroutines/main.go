@@ -20,8 +20,8 @@ func main() {
 	start := time.Now()
 
 	for i := 0; i < 5; i++ {
-		getOrder(i)
-		//go getOrder(i)
+		//getOrder(i)
+		go getOrder(i)
 	}
 
 	fmt.Println("FOR finished")
@@ -33,5 +33,5 @@ func main() {
 
 func getOrder(id int) {
 	time.Sleep(1 * time.Second)
-	fmt.Printf("The API call, number %d, was executed\n", id)
+	fmt.Printf("Task number %d, was executed\n", id)
 }

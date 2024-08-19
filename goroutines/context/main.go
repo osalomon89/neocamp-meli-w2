@@ -14,6 +14,7 @@ func main() {
 	start := time.Now()
 	result := make(chan string)
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	defer cancel()
 
 	go doHttpRequest(ctx, result, 1)
 	go doHttpRequest(ctx, result, 2)
@@ -22,7 +23,6 @@ func main() {
 	go doHttpRequest(ctx, result, 5)
 
 	response := <-result
-	cancel()
 
 	elapsed := time.Since(start)
 
@@ -35,7 +35,8 @@ func main() {
 // doHttpRequest performs an new HTTP request
 // that can take between 0 and 500ms to be done
 func doHttpRequest(ctx context.Context, result chan<- string, i int) {
-	rand.Seed(time.Now().UnixNano())
+	//rand.Seed(time.Now().UnixNano())
+	rand.New(rand.NewSource(time.Now().UnixNano()))
 	n := rand.Intn(500)
 	time.Sleep(time.Duration(n) * time.Millisecond)
 
@@ -45,6 +46,6 @@ func doHttpRequest(ctx context.Context, result chan<- string, i int) {
 	case result <- response:
 		fmt.Printf("Goroutine finished #%d\n", i)
 	case <-ctx.Done():
-		fmt.Printf("Goroutine finished #%d\n", i)
+		fmt.Printf("Context timeout: finished #%d\n", i)
 	}
 }

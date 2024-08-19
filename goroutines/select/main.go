@@ -11,7 +11,7 @@ func worker1(c chan string) {
 }
 
 func worker2(c chan string) {
-	time.Sleep(1 * time.Second)
+	time.Sleep(3 * time.Second)
 	c <- "Mensaje del worker 2"
 }
 
